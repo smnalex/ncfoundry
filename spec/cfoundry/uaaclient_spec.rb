@@ -20,14 +20,14 @@ EOF
 
   shared_examples "UAA wrapper" do
     it "converts UAA errors to CFoundry equivalents" do
-      uaa.should_receive(:wrap_uaa_errors) { nil }
+      expect(uaa).to receive(:wrap_uaa_errors) { nil }
       subject
     end
   end
 
   describe '#initialize' do
     it "passes proxy info to the UAA info client" do
-      CF::UAA::Info.stub(:new)
+      allow(CF::UAA::Info).to receive(:new)
       CFoundry::UAAClient.new(target, 'cf', http_proxy: 'http-proxy.example.com', https_proxy: 'https-proxy.example.com')
       expect(CF::UAA::Info).to have_received(:new).with(anything, hash_including(
           http_proxy: 'http-proxy.example.com',
@@ -86,15 +86,15 @@ EOF
     subject { uaa.authorize(creds) }
 
     before do
-      issuer.stub(:request_token) { auth }
-      uaa.stub(:token_issuer) { issuer }
+      allow(issuer).to receive(:request_token) { auth }
+      allow(uaa).to receive(:token_issuer) { issuer }
     end
 
     include_examples "UAA wrapper"
 
     it 'returns the token on successful authentication' do
-      issuer
-        .should_receive(:request_token)
+      expect(issuer)
+        .to receive(:request_token)
         .with(:grant_type => "password",
               :scope => nil,
               :username => username,
@@ -105,7 +105,7 @@ EOF
     context 'when authorization fails' do
       context 'in the expected way' do
         it 'raises a CFoundry::Denied error' do
-          issuer.should_receive(:request_token) { raise CF::UAA::BadResponse.new("401: FooBar") }
+          expect(issuer).to receive(:request_token) { raise CF::UAA::BadResponse.new("401: FooBar") }
           expect { subject }.to raise_error(CFoundry::Denied, "401: Authorization failed")
         end
       end
@@ -113,26 +113,26 @@ EOF
 
       context 'in an unexpected way' do
         it 'raises a CFoundry::Denied error' do
-          issuer.should_receive(:request_token) { raise CF::UAA::BadResponse.new("no_status_code") }
+          expect(issuer).to receive(:request_token) { raise CF::UAA::BadResponse.new("no_status_code") }
           expect { subject }.to raise_error(CFoundry::Denied, "400: Authorization failed")
         end
       end
 
       context "with a CF::UAA::TargetError" do
-        before { issuer.stub(:request_token) { raise CF::UAA::TargetError.new("useless info") } }
+        before { allow(issuer).to receive(:request_token) { raise CF::UAA::TargetError.new("useless info") } }
 
         it "retries with implicit grant" do
-          issuer.should_receive(:implicit_grant_with_creds).with(:username => username, :password => password)
+          expect(issuer).to receive(:implicit_grant_with_creds).with(:username => username, :password => password)
           expect { subject }.to_not raise_error
         end
 
         it "fails with Denied when given a 401" do
-          issuer.stub(:implicit_grant_with_creds) { raise CF::UAA::BadResponse.new("status 401") }
+          allow(issuer).to receive(:implicit_grant_with_creds) { raise CF::UAA::BadResponse.new("status 401") }
           expect { subject }.to raise_error(CFoundry::Denied, "401: Authorization failed")
         end
 
         it "fails with Denied when given any other status code" do
-          issuer.stub(:implicit_grant_with_creds) { raise CF::UAA::BadResponse.new("no status code") }
+          allow(issuer).to receive(:implicit_grant_with_creds) { raise CF::UAA::BadResponse.new("no status code") }
           expect { subject }.to raise_error(CFoundry::Denied, "400: Authorization failed")
         end
       end
@@ -321,7 +321,7 @@ EOF
     subject { uaa }
 
     it "wraps uaa errors" do
-      uaa.should_receive(:wrap_uaa_errors)
+      expect(uaa).to receive(:wrap_uaa_errors)
       subject.delete_user(guid)
     end
 
@@ -381,7 +381,7 @@ EOF
     end
 
     it "passes proxy info to the token issuer" do
-      CF::UAA::TokenIssuer.stub(:new).and_call_original
+      allow(CF::UAA::TokenIssuer).to receive(:new).and_call_original
       uaa.http_proxy = 'http-proxy.example.com'
       uaa.https_proxy = 'https-proxy.example.com'
 
@@ -408,7 +408,7 @@ EOF
 
   describe "#try_to_refresh_token!" do
     it "uses the refresh token to get a new access token" do
-      uaa.send(:token_issuer).should_receive(:refresh_token_grant).with(uaa.token.refresh_token) do
+      expect(uaa.send(:token_issuer)).to receive(:refresh_token_grant).with(uaa.token.refresh_token) do
         CF::UAA::TokenInfo.new(
           :token_type => "bearer",
           :access_token => "refreshed-token",
@@ -422,7 +422,7 @@ EOF
 
     context "when the refresh token has expired" do
       it "returns the current token" do
-        uaa.send(:token_issuer).should_receive(:refresh_token_grant) do
+        expect(uaa.send(:token_issuer)).to receive(:refresh_token_grant) do
           raise CF::UAA::TargetError.new
         end
 

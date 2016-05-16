@@ -15,8 +15,8 @@ module CFoundry
           let(:client) { build(:client) }
           let(:domain) { build(:domain, client: client, guid: nil)}
           it "asdf" do
-            client.should_not_receive(:owning_organization)
-            client.should_receive(:organization)
+            expect(client).not_to receive(:owning_organization)
+            expect(client).to receive(:organization)
             domain.owning_organization
           end
         end

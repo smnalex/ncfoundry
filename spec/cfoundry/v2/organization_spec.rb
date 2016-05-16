@@ -97,7 +97,7 @@ json
         end
 
         before do
-          organization.stub(:spaces).and_return([space1, space2])
+          allow(organization).to receive(:spaces).and_return([space1, space2])
 
           stub_request(:delete, "http://api.example.com/v2/organizations/#{organization.guid}/users/#{user.guid}").to_return(status: status, body: delete_from_org_response)
           stub_request(:delete, "http://api.example.com/v2/organizations/#{organization.guid}/managers/#{user.guid}").to_return(status: status, body: delete_from_org_response)

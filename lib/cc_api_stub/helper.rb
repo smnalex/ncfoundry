@@ -60,7 +60,7 @@ module CcApiStub
     def stub_request(method, path, params = nil, response = nil)
       stub = WebMock::API.stub_request(method, path)
       stub.to_return(response) if response
-      stub.with(params) if params
+      stub.with(params) if !params.nil? && !params.empty?
       stub
     end
 

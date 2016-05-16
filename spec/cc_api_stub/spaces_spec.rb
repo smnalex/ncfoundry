@@ -19,7 +19,7 @@ describe CcApiStub::Spaces do
 
   describe ".summary_fixture" do
     it "returns a space fixture" do
-      CcApiStub::Spaces.summary_fixture.should be_a(Hash)
+      expect(CcApiStub::Spaces.summary_fixture).to be_a(Hash)
     end
   end
 

@@ -38,7 +38,7 @@ module CFoundry
 
           subject.create!
 
-          a_request(:post, 'http://api.example.com/v2/user_provided_service_instances').should have_been_made
+          expect(a_request(:post, 'http://api.example.com/v2/user_provided_service_instances')).to have_been_made
         end
       end
 
@@ -48,7 +48,7 @@ module CFoundry
 
           subject.delete!
 
-          a_request(:delete, "http://api.example.com/v2/service_instances/#{subject.guid}").should have_been_made
+          expect(a_request(:delete, "http://api.example.com/v2/service_instances/#{subject.guid}")).to have_been_made
         end
       end
     end

@@ -35,14 +35,14 @@ EOF
       let(:uuid) { "4692e0ca-25ed-495e-9ae1-fcb0bcf26a96" }
 
       it "has unique_id that can be mutated" do
-        subject.unique_id.should == "0aa2f82c-6918-41df-b676-c275b5954ed7"
+        expect(subject.unique_id).to eq("0aa2f82c-6918-41df-b676-c275b5954ed7")
 
         subject.unique_id = uuid
-        subject.unique_id.should eq(uuid)
+        expect(subject.unique_id).to eq(uuid)
       end
 
       it "has free/paid indicator attribute" do
-        subject.free.should be_true
+        expect(subject.free).to be_true
       end
 
       it "has a boolean 'public' attribute" do

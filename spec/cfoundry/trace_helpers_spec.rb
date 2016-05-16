@@ -21,7 +21,7 @@ describe CFoundry::TraceHelpers do
     before { response[:body] = response_body }
 
     it "traces the provided response" do
-      tracehelper_test_class.new.response_trace(response).should == response_trace
+      expect(tracehelper_test_class.new.response_trace(response)).to eq(response_trace)
     end
   end
 
@@ -45,7 +45,7 @@ describe CFoundry::TraceHelpers do
     end
 
     it "returns nil if request is nil" do
-      tracehelper_test_class.new.request_trace(nil).should == nil
+      expect(tracehelper_test_class.new.request_trace(nil)).to eq(nil)
     end
 
     context "with protected attributes" do
@@ -85,7 +85,7 @@ describe CFoundry::TraceHelpers do
     end
 
     it "returns nil if response is nil" do
-      tracehelper_test_class.new.response_trace(nil).should == nil
+      expect(tracehelper_test_class.new.response_trace(nil)).to eq(nil)
     end
   end
 end

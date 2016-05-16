@@ -40,7 +40,7 @@ describe CcApiStub::Applications do
   
   describe ".summary_fixture" do
     it "loads a fixture file" do
-      CcApiStub::Applications.summary_fixture.should be_a(Hash)
+      expect(CcApiStub::Applications.summary_fixture).to be_a(Hash)
     end
   end
 

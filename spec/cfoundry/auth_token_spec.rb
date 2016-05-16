@@ -18,7 +18,10 @@ describe CFoundry::AuthToken do
     subject { CFoundry::AuthToken.from_uaa_token_info(token_info) }
 
     describe "#auth_header" do
-      its(:auth_header) { should eq "bearer #{access_token}" }
+      describe '#auth_header' do
+        subject { super().auth_header }
+        it { should eq "bearer #{access_token}" }
+      end
     end
 
     describe "#to_hash" do
@@ -29,22 +32,36 @@ describe CFoundry::AuthToken do
         }
       end
 
-      its(:to_hash) { should eq result_hash }
+      describe '#to_hash' do
+        subject { super().to_hash }
+        it { should eq result_hash }
+      end
     end
 
     describe "#token_data" do
       context "when the access token is encoded as expected" do
-        its(:token_data) { should eq({ :user_id => "a6", :email => "a@b.com"}) }
+        describe '#token_data' do
+          subject { super().token_data }
+          it { should eq({ :user_id => "a6", :email => "a@b.com"}) }
+        end
       end
 
       context "when the access token is not encoded as expected" do
         let(:access_token) { Base64.encode64('random-bytes') }
-        its(:token_data) { should eq({}) }
+
+        describe '#token_data' do
+          subject { super().token_data }
+          it { should eq({}) }
+        end
       end
 
       context "when the access token contains invalid json" do
         let(:access_token) { Base64.encode64('{"algo": "h1234"}{"user_id", "a6", "email": "a@b.com"}random-bytes') }
-        its(:token_data) { should eq({}) }
+
+        describe '#token_data' do
+          subject { super().token_data }
+          it { should eq({}) }
+        end
       end
 
       context "when the auth header is nil" do
@@ -52,7 +69,10 @@ describe CFoundry::AuthToken do
           subject.auth_header = nil
         end
 
-        its(:token_data) { should eq({}) }
+        describe '#token_data' do
+          subject { super().token_data }
+          it { should eq({}) }
+        end
       end
     end
   end
@@ -71,15 +91,24 @@ describe CFoundry::AuthToken do
     subject { CFoundry::AuthToken.from_hash(hash) }
 
     describe "#auth_header" do
-      its(:auth_header) { should eq("bearer #{token}") }
+      describe '#auth_header' do
+        subject { super().auth_header }
+        it { should eq("bearer #{token}") }
+      end
     end
 
     describe "#to_hash" do
-      its(:to_hash) { should eq(hash) }
+      describe '#to_hash' do
+        subject { super().to_hash }
+        it { should eq(hash) }
+      end
     end
 
     describe "#token_data" do
-      its(:token_data) { should eq({ :baz => "buzz" }) }
+      describe '#token_data' do
+        subject { super().token_data }
+        it { should eq({ :baz => "buzz" }) }
+      end
     end
   end
 

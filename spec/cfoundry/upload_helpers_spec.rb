@@ -16,9 +16,9 @@ module CFoundry
 
       def mock_zip(*args, &block)
         if args.empty?
-          CFoundry::Zip.should_receive(:pack, &block)
+          expect(CFoundry::Zip).to receive(:pack, &block)
         else
-          CFoundry::Zip.should_receive(:pack).with(*args, &block)
+          expect(CFoundry::Zip).to receive(:pack).with(*args, &block)
         end
       end
 
@@ -33,11 +33,11 @@ module CFoundry
       let(:model) { TestModelWithUploadHelpers.new(guid, client) }
 
       before do
-        client.stub(:base) { base }
-        base.stub(:upload_app)
+        allow(client).to receive(:base) { base }
+        allow(base).to receive(:upload_app)
 
         FileUtils.rm_rf tmpdir
-        Dir.stub(:tmpdir) do
+        allow(Dir).to receive(:tmpdir) do
           FileUtils.mkdir_p tmpdir
           tmpdir
         end
@@ -46,13 +46,13 @@ module CFoundry
       it "zips the app and uploads the zip file" do
         zip_path = "#{tmpdir}/#{guid}.zip"
         mock_zip(anything, zip_path) { true }
-        base.stub(:upload_app).with(guid, zip_path, [])
+        allow(base).to receive(:upload_app).with(guid, zip_path, [])
         model.upload(path, check_resources)
       end
 
       it "uploads an app with the right guid" do
         mock_zip
-        base.should_receive(:upload_app).with(guid, anything, anything)
+        expect(base).to receive(:upload_app).with(guid, anything, anything)
         model.upload(path, check_resources)
       end
 
@@ -112,7 +112,7 @@ module CFoundry
         before { mock_zip { false } }
 
         it "passes `false` to #upload_app" do
-          base.should_receive(:upload_app).with(guid, false, [])
+          expect(base).to receive(:upload_app).with(guid, false, [])
           model.upload(path, check_resources)
         end
       end
@@ -122,17 +122,17 @@ module CFoundry
           let(:path) { "#{SPEC_ROOT}/fixtures/apps/with_nested_directories" }
 
           it "prunes them before zipping" do
-            model.stub(:make_fingerprints).with(anything) do
+            allow(model).to receive(:make_fingerprints).with(anything) do
               [[], CFoundry::UploadHelpers::RESOURCE_CHECK_LIMIT + 1]
             end
 
-            base.stub(:resource_match).with(anything) do
+            allow(base).to receive(:resource_match).with(anything) do
               %w{ xyz foo/bar/baz/fizz }.map do |path|
                 {:fn => "#{tmpdir}/.cf_#{guid}_files/#{path}"}
               end
             end
 
-            base.should_receive(:upload_app).with(anything, false, anything)
+            expect(base).to receive(:upload_app).with(anything, false, anything)
             model.upload(path)
           end
         end
@@ -142,17 +142,17 @@ module CFoundry
         let(:path) { "#{SPEC_ROOT}/fixtures/apps/with_dotfiles" }
 
         it "does not prune them" do
-          model.stub(:make_fingerprints).with(anything) do
+          allow(model).to receive(:make_fingerprints).with(anything) do
             [[], CFoundry::UploadHelpers::RESOURCE_CHECK_LIMIT + 1]
           end
 
-          base.stub(:resource_match).with(anything) do
+          allow(base).to receive(:resource_match).with(anything) do
             %w{ xyz }.map do |path|
               {:fn => "#{tmpdir}/.cf_#{guid}_files/#{path}"}
             end
           end
 
-          base.should_receive(:upload_app).with(anything, anything, anything) do |_, zip, _|
+          expect(base).to receive(:upload_app).with(anything, anything, anything) do |_, zip, _|
             expect(zip).to be_a(String)
           end
 

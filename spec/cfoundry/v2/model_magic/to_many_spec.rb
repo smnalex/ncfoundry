@@ -24,18 +24,18 @@ module CFoundry
             end
 
             it "returns a new associated object" do
-              model.create_associated_model.should be_a(AssociatedModel)
+              expect(model.create_associated_model).to be_a(AssociatedModel)
             end
 
             it "sets the relation" do
               created = model.create_associated_model
-              model.associated_models.should include(created)
+              expect(model.associated_models).to include(created)
             end
 
             context "with attributes for the association" do
               it "sets these attributes on the association" do
                 created = model.create_associated_model(:attribute => "value")
-                created.attribute.should == "value"
+                expect(created.attribute).to eq("value")
               end
             end
 

@@ -110,14 +110,14 @@ module CFoundry
           it "gets both user-provided and cf-managed service instances" do
             http_stub = stub_request(:get, "#{client.target}/v2/spaces/#{space.guid}/service_instances?inline-relations-depth=1&return_user_provided_service_instances=true").to_return(:status => 200, :body => example_response)
             client.service_instances
-            http_stub.should have_been_requested
+            expect(http_stub).to have_been_requested
           end
 
           describe "via service_instance_from" do
             it "defaults to true when user_provided is set to a bogus value (not true or false)" do
               http_stub = stub_request(:get, "#{client.target}/v2/spaces/#{space.guid}/service_instances?inline-relations-depth=1&return_user_provided_service_instances=true").to_return(:status => 200, :body => example_response)
               client.service_instances(user_provided: 'some_non-boolean_value')
-              http_stub.should have_been_requested
+              expect(http_stub).to have_been_requested
             end
           end
         end
@@ -125,23 +125,23 @@ module CFoundry
 
       describe 'query params' do
         it 'allows query by name' do
-          client.should respond_to(:service_instance_by_name)
+          expect(client).to respond_to(:service_instance_by_name)
         end
 
         it 'allows query by space_guid' do
-          client.should respond_to(:service_instance_by_space_guid)
+          expect(client).to respond_to(:service_instance_by_space_guid)
         end
 
         it 'allows query by gateway_name' do
-          client.should respond_to(:service_instance_by_gateway_name)
+          expect(client).to respond_to(:service_instance_by_gateway_name)
         end
 
         it 'allows query by service_plan_guid' do
-          client.should respond_to(:service_instance_by_service_plan_guid)
+          expect(client).to respond_to(:service_instance_by_service_plan_guid)
         end
 
         it 'allows query by service_binding_guid' do
-          client.should respond_to(:service_instance_by_service_binding_guid)
+          expect(client).to respond_to(:service_instance_by_service_binding_guid)
         end
       end
     end

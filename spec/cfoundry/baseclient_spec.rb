@@ -5,12 +5,12 @@ describe CFoundry::BaseClient do
   subject(:client) { CFoundry::BaseClient.new("http://api.example.com") }
   describe "#request" do
     before do
-      subject.stub(:handle_response).with(anything, anything, anything)
+      allow(subject).to receive(:handle_response).with(anything, anything, anything)
     end
 
     context "when given multiple segments" do
       it "encodes the segments and joins them with '/'" do
-        subject.should_receive(:request_raw).with("GET", "foo/bar%2Fbaz", {})
+        expect(subject).to receive(:request_raw).with("GET", "foo/bar%2Fbaz", {})
         subject.request("GET", "foo", "bar/baz")
       end
     end
@@ -18,14 +18,14 @@ describe CFoundry::BaseClient do
     context "when the first segment starts with a '/'" do
       context "and there's only one segment" do
         it "requests with the segment unaltered" do
-          subject.should_receive(:request_raw).with("GET", "/v2/apps", {})
+          expect(subject).to receive(:request_raw).with("GET", "/v2/apps", {})
           subject.request("GET", "/v2/apps")
         end
       end
 
       context "and there's more than one segment" do
         it "encodes the segments and joins them with '/'" do
-          subject.should_receive(:request_raw).with("GET", "%2Ffoo/bar%2Fbaz", {})
+          expect(subject).to receive(:request_raw).with("GET", "%2Ffoo/bar%2Fbaz", {})
           subject.request("GET", "/foo", "bar/baz")
         end
       end
@@ -36,9 +36,9 @@ describe CFoundry::BaseClient do
       let(:token) { CFoundry::AuthToken.new("bearer something", refresh_token) }
 
       before do
-        subject.stub(:request_raw)
+        allow(subject).to receive(:request_raw)
         subject.token = token
-        token.stub(:expires_soon?) { expires_soon? }
+        allow(token).to receive(:expires_soon?) { expires_soon? }
       end
 
       context "and the token is about to expire" do
@@ -49,12 +49,12 @@ describe CFoundry::BaseClient do
           let(:refresh_token) { "some-refresh-token" }
 
           it "sets the token's auth header to nil to prevent recursion" do
-            subject.stub(:refresh_token!)
+            allow(subject).to receive(:refresh_token!)
             subject.request("GET", "foo")
           end
 
           it "refreshes the access token" do
-            subject.should_receive(:refresh_token!)
+            expect(subject).to receive(:refresh_token!)
             subject.request("GET", "foo")
           end
         end
@@ -63,8 +63,8 @@ describe CFoundry::BaseClient do
           let(:refresh_token) { nil }
 
           it "moves along" do
-            subject.should_receive(:request_raw).with(anything, anything, anything)
-            subject.should_not_receive(:refresh_token!)
+            expect(subject).to receive(:request_raw).with(anything, anything, anything)
+            expect(subject).not_to receive(:refresh_token!)
             subject.request("GET", "foo")
           end
         end
@@ -74,8 +74,8 @@ describe CFoundry::BaseClient do
         let(:expires_soon?) { nil }
 
         it "moves along" do
-          subject.should_receive(:request_raw).with(anything, anything, anything)
-          subject.should_not_receive(:refresh_token!)
+          expect(subject).to receive(:request_raw).with(anything, anything, anything)
+          expect(subject).not_to receive(:refresh_token!)
           subject.request("GET", "foo")
         end
       end
@@ -88,10 +88,10 @@ describe CFoundry::BaseClient do
       let(:new_access_token) { Base64.encode64(%Q|{"algo": "h1234"}{"a":"x"}random-bytes|) }
       let(:auth_token) { CFoundry::AuthToken.new("bearer #{access_token}", refresh_token) }
 
-      before { subject.stub(:uaa) { uaa } }
+      before { allow(subject).to receive(:uaa) { uaa } }
 
       it "refreshes the token with UAA client and assigns it" do
-        uaa.should_receive(:try_to_refresh_token!) {
+        expect(uaa).to receive(:try_to_refresh_token!) {
           CFoundry::AuthToken.new("bearer #{new_access_token}", auth_token.refresh_token)
         }
 
@@ -108,7 +108,7 @@ describe CFoundry::BaseClient do
       let(:info) { { :authorization_endpoint => authorization_endpoint } }
 
       before do
-        subject.stub(:info) { info }
+        allow(subject).to receive(:info) { info }
       end
 
       describe "#uaa" do
@@ -123,7 +123,7 @@ describe CFoundry::BaseClient do
 
         it "has the same AuthToken as BaseClient" do
           token = CFoundry::AuthToken.new(nil)
-          subject.stub(:token) { token }
+          allow(subject).to receive(:token) { token }
           expect(subject.uaa.token).to eq token
         end
 
@@ -143,7 +143,7 @@ describe CFoundry::BaseClient do
           end
 
           it "passes the proxy to the uaa client" do
-            CFoundry::UAAClient.stub(:new).and_call_original
+            allow(CFoundry::UAAClient).to receive(:new).and_call_original
             subject.uaa
             expect(CFoundry::UAAClient).to have_received(:new).with(anything, anything, hash_including(
                 http_proxy: 'http-proxy.example.com',
@@ -175,7 +175,7 @@ describe CFoundry::BaseClient do
 
     context "with no uaa endpoint" do
       before do
-        subject.stub(:info) { { :something => "else" } }
+        allow(subject).to receive(:info) { { :something => "else" } }
       end
 
       describe "#uaa" do
@@ -190,18 +190,18 @@ describe CFoundry::BaseClient do
   describe "#password_score" do
     context "with a uaa" do
       before do
-        subject.stub(:info) { { :authorization_endpoint => "http://uaa.example.com" } }
+        allow(subject).to receive(:info) { { :authorization_endpoint => "http://uaa.example.com" } }
       end
 
       it "delegates to the uaa's password strength method" do
-        subject.uaa.should_receive(:password_score).with('password')
+        expect(subject.uaa).to receive(:password_score).with('password')
         subject.password_score('password')
       end
     end
 
     context "without a uaa" do
       before do
-        subject.stub(:info) { { :something => "else" } }
+        allow(subject).to receive(:info) { { :something => "else" } }
       end
 
       it "returns :unknown" do
@@ -239,7 +239,7 @@ describe CFoundry::BaseClient do
     it "sets proxy options if available" do
       stub_request(:get, "https://example.com/something")
       subject.https_proxy = "user:password@https-proxy.example.com:1234"
-      Net::HTTP.stub(:start).and_call_original
+      allow(Net::HTTP).to receive(:start).and_call_original
 
       subject.stream_url("https://example.com/something")
 

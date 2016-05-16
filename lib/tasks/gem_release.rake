@@ -1,5 +1,4 @@
-require 'active_support/time'
-require 'active_support/core_ext'
+require 'active_support/all'
 
 namespace :gem do
   desc "Bump gem version, push to RubyGems, push to Github, add release notes"

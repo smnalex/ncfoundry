@@ -40,7 +40,7 @@ module CFoundry
         let(:client) { build(:client) }
 
         it "is queryable by name" do
-          client.should_receive(:quota_definitions).with({:query=>[:name, "quota-name"]}) {[]}
+          expect(client).to receive(:quota_definitions).with({:query=>[:name, "quota-name"]}) {[]}
 
           client.quota_definition_by_name("quota-name")
         end

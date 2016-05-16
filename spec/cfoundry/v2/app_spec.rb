@@ -60,7 +60,7 @@ module CFoundry
         let(:app) { build(:app) }
 
         it "assigns :instances as #total_instances" do
-          app.stub(:summary) { {:instances => 4} }
+          allow(app).to receive(:summary) { {:instances => 4} }
 
           app.summarize!
 
@@ -73,13 +73,13 @@ module CFoundry
         let(:response) { {:body => '{ "foo": "bar" }'} }
 
         before do
-          client.base.stub(:put).with("v2", "apps", subject.guid, anything) do
+          allow(client.base).to receive(:put).with("v2", "apps", subject.guid, anything) do
             response
           end
         end
 
         it "sends the PUT request" do
-          client.base.should_receive(:put).with(
+          expect(client.base).to receive(:put).with(
             "v2", "apps", subject.guid,
             hash_including(
               :return_response => true)) do
@@ -146,7 +146,7 @@ module CFoundry
           let(:response) { {:body => {"foo" => "bar"}.to_json} }
 
           before do
-            client.base.stub(:put).with("v2", "apps", subject.guid, anything) do
+            allow(client.base).to receive(:put).with("v2", "apps", subject.guid, anything) do
               response
             end
           end
@@ -169,13 +169,13 @@ module CFoundry
         let(:base_url) { "http://example.com/log" }
 
         def mock_log(url = anything)
-          client.should_receive(:stream_url).with(url) do |_, &blk|
+          expect(client).to receive(:stream_url).with(url) { |_, &blk|
             blk.call(yield)
-          end.ordered
+          }.ordered
         end
 
         def stub_log(url = anything)
-          client.stub(:stream_url).with(url) do |_, blk|
+          allow(client).to receive(:stream_url).with(url) do |_, blk|
             blk.call(yield)
           end.ordered
         end
@@ -242,14 +242,14 @@ module CFoundry
 
       describe "delete!" do
         it "defaults to recursive" do
-          client.base.should_receive(:delete).with("v2", :apps, subject.guid, {:params => {:recursive => true}})
+          expect(client.base).to receive(:delete).with("v2", :apps, subject.guid, {:params => {:recursive => true}})
 
           subject.delete!
         end
       end
 
       it "accepts and ignores an options hash" do
-        client.base.should_receive(:delete).with("v2", :apps, subject.guid, {:params => {:recursive => true}})
+        expect(client.base).to receive(:delete).with("v2", :apps, subject.guid, {:params => {:recursive => true}})
 
         subject.delete!(:recursive => false)
       end
@@ -257,8 +257,8 @@ module CFoundry
       describe "#health" do
         describe "when staging failed for an app" do
           it "returns 'STAGING FAILED' as state" do
-            AppInstance.stub(:for_app) { raise CFoundry::StagingError }
-            subject.stub(:state) { "STARTED" }
+            allow(AppInstance).to receive(:for_app) { raise CFoundry::StagingError }
+            allow(subject).to receive(:state) { "STARTED" }
 
             expect(subject.health).to eq("STAGING FAILED")
           end
@@ -267,9 +267,9 @@ module CFoundry
 
       describe "#percent_running" do
         before do
-          subject.stub(:state) { "STARTED" }
+          allow(subject).to receive(:state) { "STARTED" }
           subject.total_instances = instances.count
-          AppInstance.stub(:for_app).with(subject.name, subject.guid, client) { instances }
+          allow(AppInstance).to receive(:for_app).with(subject.name, subject.guid, client) { instances }
         end
 
         let(:instances) do
@@ -289,7 +289,7 @@ module CFoundry
         end
 
         context "when staging has failed" do
-          before { AppInstance.stub(:for_app) { raise CFoundry::StagingError } }
+          before { allow(AppInstance).to receive(:for_app) { raise CFoundry::StagingError } }
 
           it "returns 0" do
             expect(subject.percent_running).to eq(0)
@@ -303,14 +303,14 @@ module CFoundry
 
         context "when at least one route exists" do
           it "returns the host that the user has specified" do
-            app.stub(:routes).and_return([route])
+            allow(app).to receive(:routes).and_return([route])
             expect(app.host).to eq("my-host")
           end
         end
 
         context "when no routes exists" do
           it "returns the host that the user has specified" do
-            app.stub(:routes).and_return([])
+            allow(app).to receive(:routes).and_return([])
             expect(app.host).to be_nil
           end
         end
@@ -323,14 +323,14 @@ module CFoundry
 
         context "when at least one route exists" do
           it "returns the domain that the user has specified" do
-            app.stub(:routes).and_return([route])
+            allow(app).to receive(:routes).and_return([route])
             expect(app.domain).to eq("my-domain")
           end
         end
 
         context "when no routes exists" do
           it "returns the domain that the user has specified" do
-            app.stub(:routes).and_return([])
+            allow(app).to receive(:routes).and_return([])
             expect(app.domain).to be_nil
           end
         end
@@ -344,7 +344,7 @@ module CFoundry
           let(:app) { build(:app) }
 
           it "return the first one" do
-            app.stub(:routes).and_return([route, other_route])
+            allow(app).to receive(:routes).and_return([route, other_route])
             expect(app.uri).to eq("#{route.host}.#{route.domain.name}")
           end
         end

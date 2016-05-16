@@ -25,21 +25,21 @@ module CFoundry
 
       describe "create" do
         it "uses #create!" do
-          model.should_receive(:create!)
+          expect(model).to receive(:create!)
           model.create
         end
 
         context "without errors" do
           it "returns true" do
-            model.should_receive(:create!)
-            model.create.should == true
+            expect(model).to receive(:create!)
+            expect(model.create).to eq(true)
           end
         end
 
         context "with errors" do
           before do
-            model.class.stub(:model_name) { ActiveModel::Name.new(model, nil, "abstract_model") }
-            model.stub(:create!) { raise CFoundry::APIError.new("HELP") }
+            allow(model.class).to receive(:model_name) { ActiveModel::Name.new(model, nil, "abstract_model") }
+            allow(model).to receive(:create!) { raise CFoundry::APIError.new("HELP") }
           end
 
           it "does not raise an exception" do
@@ -47,20 +47,20 @@ module CFoundry
           end
 
           it "returns false" do
-            model.create.should == false
+            expect(model.create).to eq(false)
           end
 
           context "without model-specific errors" do
             it "adds generic base error " do
               model.create
-              model.errors.full_messages.first.should =~ /cloud controller reported an error/i
+              expect(model.errors.full_messages.first).to match(/cloud controller reported an error/i)
             end
           end
 
           context "with model-specific errors" do
             it "does not set the generic error on base" do
               model.create
-              model.errors.size.should == 1
+              expect(model.errors.size).to eq(1)
             end
           end
         end
@@ -68,7 +68,7 @@ module CFoundry
 
       describe "#create!" do
         before do
-          client.base.stub(:post) {
+          allow(client.base).to receive(:post) {
             {:metadata => {
                 :guid => "123",
                 :created_at => "2013-06-10 10:41:15 -0700",
@@ -79,7 +79,7 @@ module CFoundry
         end
 
         it "posts to the model's create url with appropriate arguments" do
-          client.base.should_receive(:post).with("v2", :odd_endpoint,
+          expect(client.base).to receive(:post).with("v2", :odd_endpoint,
             :content => :json,
             :accept => :json,
             :payload => {:foo => "bar"}
@@ -88,38 +88,38 @@ module CFoundry
         end
 
         it "clears diff" do
-          model.diff.should be_present
+          expect(model.diff).to be_present
           model.create!
-          model.diff.should_not be_present
+          expect(model.diff).not_to be_present
         end
 
         it "sets manifest from the response" do
           model.create!
-          model.manifest.should == {
+          expect(model.manifest).to eq({
             :metadata => {
               :guid => "123",
               :created_at => "2013-06-10 10:41:15 -0700",
               :updated_at => "2015-06-10 10:41:15 -0700"
             }
-          }
+          })
         end
 
         it "sets guid from the response metadata" do
           model.create!
-          model.guid.should == "123"
+          expect(model.guid).to eq("123")
         end
 
         it "sets timestamps from the response metadata" do
           model.create!
 
-          model.created_at.should == DateTime.parse("2013-06-10 10:41:15 -0700")
-          model.updated_at.should == DateTime.parse("2015-06-10 10:41:15 -0700")
+          expect(model.created_at).to eq(DateTime.parse("2013-06-10 10:41:15 -0700"))
+          expect(model.updated_at).to eq(DateTime.parse("2015-06-10 10:41:15 -0700"))
         end
       end
 
       describe "#update!" do
         before do
-          client.base.stub(:put) {
+          allow(client.base).to receive(:put) {
             {
               :metadata => {
                 :guid => guid,
@@ -135,7 +135,7 @@ module CFoundry
 
         it "updates using the client with the v2 api, its plural model name, object guid, and diff object" do
           model.foo = "bar"
-          client.base.should_receive(:put).with("v2", :test_models, guid,
+          expect(client.base).to receive(:put).with("v2", :test_models, guid,
             :content => :json,
             :accept => :json,
             :payload => {:foo => "bar"}
@@ -145,45 +145,45 @@ module CFoundry
 
         it "updates the updated_at timestamp" do
           model.update!
-          model.updated_at.should == DateTime.parse("2015-06-12 10:41:15 -0700")
+          expect(model.updated_at).to eq(DateTime.parse("2015-06-12 10:41:15 -0700"))
         end
 
         it "reloads it's data from the manifest" do
           model.update!
-          model.foo.should == "updated"
+          expect(model.foo).to eq("updated")
         end
 
         it "clears diff" do
           model.foo = "bar"
 
-          model.diff.should be_present
+          expect(model.diff).to be_present
           model.update!
-          model.diff.should_not be_present
+          expect(model.diff).not_to be_present
         end
       end
 
       describe "delete" do
         it "uses #delete!" do
-          model.should_receive(:delete!).with({}) { true }
+          expect(model).to receive(:delete!).with({}) { true }
           model.delete
         end
 
         it "passes options along to delete!" do
-          model.should_receive(:delete!).with(:recursive => true) { true }
+          expect(model).to receive(:delete!).with(:recursive => true) { true }
           model.delete(:recursive => true)
         end
 
         context "without errors" do
           it "returns true" do
-            model.should_receive(:delete!).with({}) { true }
-            model.delete.should == true
+            expect(model).to receive(:delete!).with({}) { true }
+            expect(model.delete).to eq(true)
           end
         end
 
         context "with errors" do
           before do
-            model.class.stub(:model_name) { ActiveModel::Name.new(model, nil, "abstract_model") }
-            model.stub(:delete!) { raise CFoundry::APIError.new("HELP") }
+            allow(model.class).to receive(:model_name) { ActiveModel::Name.new(model, nil, "abstract_model") }
+            allow(model).to receive(:delete!) { raise CFoundry::APIError.new("HELP") }
           end
 
           it "does not raise an exception" do
@@ -191,31 +191,31 @@ module CFoundry
           end
 
           it "returns false" do
-            model.delete.should == false
+            expect(model.delete).to eq(false)
           end
 
           context "without model-specific errors" do
             it "adds generic base error " do
               model.delete
-              model.errors.full_messages.first.should =~ /cloud controller reported an error/i
+              expect(model.errors.full_messages.first).to match(/cloud controller reported an error/i)
             end
           end
 
           context "with model-specific errors" do
             it "does not set the generic error on base" do
               model.delete
-              model.errors.size.should == 1
+              expect(model.errors.size).to eq(1)
             end
           end
         end
       end
 
       describe "#delete!" do
-        before { client.base.stub(:delete) }
+        before { allow(client.base).to receive(:delete) }
 
         context "without options" do
           it "deletes using the client with the v2 api, its plural model name, object guid, and empty params hash" do
-            client.base.should_receive(:delete).with("v2", :test_models, guid, :params => {})
+            expect(client.base).to receive(:delete).with("v2", :test_models, guid, :params => {})
             model.delete!
           end
         end
@@ -223,30 +223,30 @@ module CFoundry
         context "with options" do
           it "sends delete with the object guid and options" do
             options = {:excellent => "billandted"}
-            client.base.should_receive(:delete).with("v2", :test_models, guid, :params => options)
+            expect(client.base).to receive(:delete).with("v2", :test_models, guid, :params => options)
 
             model.delete!(options)
           end
         end
 
         it "clears its manifest metadata" do
-          model.manifest.should have_key(:metadata)
+          expect(model.manifest).to have_key(:metadata)
           model.delete!
-          model.manifest.should_not have_key(:metadata)
+          expect(model.manifest).not_to have_key(:metadata)
         end
 
         it "clears the diff" do
           model.foo = "bar"
-          model.diff.should be_present
+          expect(model.diff).to be_present
           model.delete!
-          model.diff.should_not be_present
+          expect(model.diff).not_to be_present
         end
 
         it "delete me" do
           begin
             model.delete!
           rescue => ex
-            ex.message.should_not =~ /\?/
+            expect(ex.message).not_to match(/\?/)
           end
         end
       end
@@ -254,8 +254,8 @@ module CFoundry
       describe "#to_key" do
         context "when persisted" do
           it "returns an enumerable containing the guid" do
-            model.to_key.should respond_to(:each)
-            model.to_key.first.should == guid
+            expect(model.to_key).to respond_to(:each)
+            expect(model.to_key.first).to eq(guid)
           end
         end
 
@@ -263,7 +263,7 @@ module CFoundry
           let(:guid) { nil }
 
           it "returns nil" do
-            model.to_key.should be_nil
+            expect(model.to_key).to be_nil
           end
         end
       end
@@ -271,8 +271,8 @@ module CFoundry
       describe "#to_param" do
         context "when persisted" do
           it "returns the guid as a string" do
-            model.to_param.should be_a(String)
-            model.to_param.should == guid
+            expect(model.to_param).to be_a(String)
+            expect(model.to_param).to eq(guid)
           end
         end
 
@@ -280,7 +280,7 @@ module CFoundry
           let(:guid) { nil }
 
           it "returns nil" do
-            model.to_param.should be_nil
+            expect(model.to_param).to be_nil
           end
         end
       end
@@ -289,24 +289,24 @@ module CFoundry
         context "on a new object" do
           let(:guid) { nil }
           it "returns false" do
-            model.should_not be_persisted
+            expect(model).not_to be_persisted
           end
         end
 
         context "on an object with a guid" do
           it "returns false" do
-            model.should be_persisted
+            expect(model).to be_persisted
           end
         end
 
         context "on an object that has been deleted" do
           before do
-            client.base.stub(:delete)
+            allow(client.base).to receive(:delete)
             model.delete
           end
 
           it "returns false" do
-            model.should_not be_persisted
+            expect(model).not_to be_persisted
           end
         end
       end
@@ -316,19 +316,19 @@ module CFoundry
 
         context "when metadata are set" do
           it "has timestamps" do
-            new_object.created_at.should be_nil
-            new_object.updated_at.should be_nil
+            expect(new_object.created_at).to be_nil
+            expect(new_object.updated_at).to be_nil
           end
         end
 
         context "when metadata are not defined" do
           before do
-            new_object.stub(:manifest).with(nil)
+            allow(new_object).to receive(:manifest).with(nil)
           end
 
           it "returns nil for timestamps" do
-            new_object.updated_at.should be_nil
-            new_object.updated_at.should be_nil
+            expect(new_object.updated_at).to be_nil
+            expect(new_object.updated_at).to be_nil
           end
         end
       end
@@ -345,14 +345,14 @@ module CFoundry
 
           it "remembers set values" do
             new_object.foo = "bar"
-            new_object.foo.should == "bar"
+            expect(new_object.foo).to eq("bar")
           end
         end
 
         describe "getting associations" do
           describe "to_one associations" do
             it "returns the an empty object of the association's type" do
-              new_object.domain.guid.should be_nil
+              expect(new_object.domain.guid).to be_nil
             end
           end
         end
@@ -379,9 +379,9 @@ module CFoundry
 
           it "has next_page set to true" do
             results = client.test_models_first_page
-            results[:next_page].should be_true
-            results[:results].length.should == 1
-            results[:results].first.should be_a TestModel
+            expect(results[:next_page]).to be_true
+            expect(results[:results].length).to eq(1)
+            expect(results[:results].first).to be_a TestModel
           end
         end
 
@@ -390,7 +390,7 @@ module CFoundry
 
           it "has next_page set to false" do
             results = client.test_models_first_page
-            results[:next_page].should be_false
+            expect(results[:next_page]).to be_false
           end
         end
       end
@@ -417,8 +417,8 @@ module CFoundry
           client.test_models_for_each do |test_model|
             results << test_model
           end
-          results.map(&:guid).should == %w{1 2 3}
-          results.first.should be_a TestModel
+          expect(results.map(&:guid)).to eq(%w{1 2 3})
+          expect(results.first).to be_a TestModel
         end
       end
 

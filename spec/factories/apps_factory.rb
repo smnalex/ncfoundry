@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :app, :class => CFoundry::V2::App do
     sequence(:guid) { |n| "app-guid-#{n}" }
-    ignore do
+    transient do
       manifest { {} }
       client { FactoryGirl.build(:client) }
     end

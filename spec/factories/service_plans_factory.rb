@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :service_plan, :class => CFoundry::V2::ServicePlan do
     sequence(:guid) { |n| "service-plan-guid-#{n}" }
-    ignore do
+    transient do
       client { FactoryGirl.build(:client) }
     end
 

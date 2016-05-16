@@ -3,7 +3,7 @@ FactoryGirl.define do
     sequence(:guid) { |n| "organization-guid-#{n}" }
     status "active"
 
-    ignore do
+    transient do
       client { FactoryGirl.build(:client) }
     end
 

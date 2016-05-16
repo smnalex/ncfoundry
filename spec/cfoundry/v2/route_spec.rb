@@ -15,26 +15,26 @@ module CFoundry
         it "only allows host names according to RFC1035" do
           message = "can only include a-z, 0-9 and -"
 
-          route.should allow_value("a", "starts-with-letter", "includes-9-digits", "ends-with-letter",
+          expect(route).to allow_value("a", "starts-with-letter", "includes-9-digits", "ends-with-letter",
             "ends-with-digit-9", "can--have--consecutive---dashes", "allows-UPPERCASE-chars").for(:host)
 
           ["-must-start-with-letter", "9must-start-with-letter", "must-not-end-with-dash-", "must-not-include-punctuation-chars-@\#$%^&*()",
             "must-not-include-special-chars-ä", "must.not.include.dots"].each do |bad_value|
-            route.should_not allow_value(bad_value).for(:host).with_message(message)
+            expect(route).not_to allow_value(bad_value).for(:host).with_message(message)
           end
 
-          route.should ensure_length_of(:host).is_at_most(63)
+          expect(route).to ensure_length_of(:host).is_at_most(63)
         end
       end
 
       describe "errors" do
         before do
-          route.stub(:create!) { raise CFoundry::RouteHostTaken.new("the host is taken", 210003) }
+          allow(route).to receive(:create!) { raise CFoundry::RouteHostTaken.new("the host is taken", 210003) }
         end
 
         it "populates errors on host" do
           route.create
-          route.errors[:host].first.should =~ /the host is taken/i
+          expect(route.errors[:host].first).to match(/the host is taken/i)
         end
       end
     end

@@ -47,17 +47,17 @@ shared_examples_for 'a stubbed delete request' do |*options|
 end
 
 def check_response(response, options)
-  response.code.should == options[:code].to_s
+  expect(response.code).to eq(options[:code].to_s)
 
   unless options[:ignore_response]
     json = JSON.parse(response.body)
-    json.should be_a(Hash)
+    expect(json).to be_a(Hash)
 
     if options[:including_json]
       if Proc === options[:including_json]
         options[:including_json][json]
       else
-        json.should deep_hash_include(options[:including_json])
+        expect(json).to deep_hash_include(options[:including_json])
       end
     end
   end

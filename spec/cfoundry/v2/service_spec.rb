@@ -44,14 +44,14 @@ EOF
       let(:uuid) { "4692e0ca-25ed-495e-9ae1-fcb0bcf26a96" }
 
       it "has unique_id that can be mutated" do
-        subject.unique_id.should == "0aa2f82c-6918-41df-b676-c275b5954ed7"
+        expect(subject.unique_id).to eq("0aa2f82c-6918-41df-b676-c275b5954ed7")
 
         subject.unique_id = uuid
-        subject.unique_id.should eq(uuid)
+        expect(subject.unique_id).to eq(uuid)
       end
 
       it "has tags" do
-        subject.tags.should == []
+        expect(subject.tags).to eq([])
       end
     end
   end

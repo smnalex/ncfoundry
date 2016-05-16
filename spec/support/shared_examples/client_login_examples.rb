@@ -8,8 +8,8 @@ shared_examples_for 'client login prompts' do
   end
 
   before do
-    client.base.stub(:uaa) { uaa }
-    uaa.stub(:prompts) { prompts }
+    allow(client.base).to receive(:uaa) { uaa }
+    allow(uaa).to receive(:prompts) { prompts }
   end
 
   subject { client.login_prompts }
@@ -27,8 +27,8 @@ shared_examples_for 'client login' do
   let(:token_info) { CF::UAA::TokenInfo.new({ :access_token => access_token, :token_type => "bearer" }) }
 
   before do
-    client.base.stub(:uaa) { uaa }
-    uaa.stub(:authorize).with(:username => email, :password => password) { token_info }
+    allow(client.base).to receive(:uaa) { uaa }
+    allow(uaa).to receive(:authorize).with(:username => email, :password => password) { token_info }
   end
 
   subject { client.login(:username => email, :password => password) }

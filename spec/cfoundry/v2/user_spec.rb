@@ -10,19 +10,19 @@ module CFoundry
         describe 'when cloud controller was able to delete the user' do
           before do
             stub_request(:delete, /v2\/users\/.*/).to_return(:status => 200, :body => "", :headers => {})
-            client.base.stub(:info).and_return({:authorization_endpoint => 'some_endpoint'})
+            allow(client.base).to receive(:info).and_return({:authorization_endpoint => 'some_endpoint'})
           end
 
           it "also removes the user from uaa" do
-            CFoundry::UAAClient.any_instance.should_receive(:delete_user)
+            expect_any_instance_of(CFoundry::UAAClient).to receive(:delete_user)
 
-            subject.delete!.should be_true
+            expect(subject.delete!).to be_true
           end
         end
 
         describe "when cloud controller was unable to delete the user" do
           before do
-            client.base.stub(:delete).and_raise(CFoundry::APIError)
+            allow(client.base).to receive(:delete).and_raise(CFoundry::APIError)
           end
 
           it "allows the exception to bubble up" do
@@ -179,10 +179,10 @@ EOF
         end
 
         it "retrieves metadata from the UAA" do
-          subject.email.should == user_email
-          subject.given_name.should == given_name
-          subject.family_name.should == family_name
-          subject.full_name.should == "#{given_name} #{family_name}"
+          expect(subject.email).to eq(user_email)
+          expect(subject.given_name).to eq(given_name)
+          expect(subject.family_name).to eq(family_name)
+          expect(subject.full_name).to eq("#{given_name} #{family_name}")
         end
 
         it "should be nil if user doesn't have permission to query uaa" do
@@ -195,9 +195,9 @@ EOF
             "error_description": "Access is denied"
           }
 EOF
-          subject.email.should == nil
-          subject.given_name.should == nil
-          subject.family_name.should == nil
+          expect(subject.email).to eq(nil)
+          expect(subject.given_name).to eq(nil)
+          expect(subject.family_name).to eq(nil)
         end
 
       end

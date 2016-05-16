@@ -15,7 +15,7 @@ describe CcApiStub::Organizations do
 
   describe '.summary_fixture' do
     it 'returns the fake org' do
-      CcApiStub::Organizations.summary_fixture.should be_a(Hash)
+      expect(CcApiStub::Organizations.summary_fixture).to be_a(Hash)
     end
   end
 
@@ -55,15 +55,15 @@ describe CcApiStub::Organizations do
 
   describe '.domains_fixture' do
     it 'returns the fake domain' do
-      CcApiStub::Organizations.domains_fixture.should be_a(Hash)
+      expect(CcApiStub::Organizations.domains_fixture).to be_a(Hash)
     end
   end
 
   describe '.domains_fixture_hash' do
     it 'returns the fake domain' do
       fixture = CcApiStub::Organizations.domain_fixture_hash
-      fixture.should be_a(Hash)
-      fixture.should == fixture.symbolize_keys
+      expect(fixture).to be_a(Hash)
+      expect(fixture).to eq(fixture.symbolize_keys)
     end
   end
 
@@ -76,15 +76,15 @@ describe CcApiStub::Organizations do
 
   describe '.users_fixture' do
     it "returns the fake users" do
-      CcApiStub::Organizations.users_fixture.should be_a(Hash)
+      expect(CcApiStub::Organizations.users_fixture).to be_a(Hash)
     end
   end
 
   describe '.user_fixture_hash' do
     it 'returns the fake user' do
       fixture = CcApiStub::Organizations.user_fixture_hash
-      fixture.should be_a(Hash)
-      fixture.should == fixture.symbolize_keys
+      expect(fixture).to be_a(Hash)
+      expect(fixture).to eq(fixture.symbolize_keys)
     end
   end
 
@@ -97,15 +97,15 @@ describe CcApiStub::Organizations do
 
   describe '.spaces_fixture' do
     it "returns the fake spaces" do
-      CcApiStub::Organizations.spaces_fixture.should be_a(Hash)
+      expect(CcApiStub::Organizations.spaces_fixture).to be_a(Hash)
     end
   end
 
   describe '.space_fixture_hash' do
     it 'returns the fake space' do
       fixture = CcApiStub::Organizations.space_fixture_hash
-      fixture.should be_a(Hash)
-      fixture.should == fixture.symbolize_keys
+      expect(fixture).to be_a(Hash)
+      expect(fixture).to eq(fixture.symbolize_keys)
     end
   end
 

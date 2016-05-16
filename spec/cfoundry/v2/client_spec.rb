@@ -13,12 +13,12 @@ module CFoundry
         subject { client.register(email, password) }
 
         it "creates the user in uaa and ccng" do
-          client.base.stub(:uaa) { uaa }
-          uaa.stub(:add_user).with(email, password, {}) { {:id => "1234"} }
+          allow(client.base).to receive(:uaa) { uaa }
+          allow(uaa).to receive(:add_user).with(email, password, {}) { {:id => "1234"} }
 
           user = build(:user)
-          client.stub(:user) { user }
-          user.stub(:create!)
+          allow(client).to receive(:user) { user }
+          allow(user).to receive(:create!)
           subject
           expect(user.guid).to eq "1234"
         end
@@ -46,13 +46,24 @@ module CFoundry
           end
 
           it { should be_a User }
-          its(:guid) { should eq "123" }
-          its(:emails) { should eq [{:value => "guy@example.com"}] }
+
+          describe '#guid' do
+            subject { super().guid }
+            it { should eq "123" }
+          end
+
+          describe '#emails' do
+            subject { super().emails }
+            it { should eq [{:value => "guy@example.com"}] }
+          end
         end
       end
 
       describe "#version" do
-        its(:version) { should eq 2 }
+        describe '#version' do
+          subject { super().version }
+          it { should eq 2 }
+        end
       end
 
       describe "#login_prompts" do

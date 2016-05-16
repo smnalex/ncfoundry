@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :space, :class => CFoundry::V2::Space do
     sequence(:guid) { |n| "space-guid-#{n}" }
-    ignore do
+    transient do
       client { FactoryGirl.build(:client) }
     end
 

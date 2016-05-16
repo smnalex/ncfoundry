@@ -84,7 +84,7 @@ describe CcApiStub::Users do
     subject { CcApiStub::Users.organizations_fixture }
 
     it "returns a fixture" do
-      subject.should be_a Array
+      expect(subject).to be_a Array
     end
   end
 
@@ -92,15 +92,15 @@ describe CcApiStub::Users do
     subject { CcApiStub::Users.organization_fixture_hash }
 
     it "returns a fixture" do
-      subject.should be_a Hash
+      expect(subject).to be_a Hash
     end
 
     context "when specifying options" do
       subject { CcApiStub::Users.organization_fixture_hash(:no_spaces => true, :no_managers => true) }
 
       it "takes options into account" do
-        subject[:entity][:spaces].should be_nil
-        subject[:entity][:managers].should be_nil
+        expect(subject[:entity][:spaces]).to be_nil
+        expect(subject[:entity][:managers]).to be_nil
       end
     end
   end
