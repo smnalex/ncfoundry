@@ -3,17 +3,16 @@ $:.push File.expand_path("../lib", __FILE__)
 require "cfoundry/version"
 
 Gem::Specification.new do |s|
-  s.name        = "cfoundry"
+  s.name        = "new_cfoundry"
   s.version     = CFoundry::VERSION.dup
-  s.authors     = ["Cloud Foundry Team", "Alex Suraci"]
+  s.authors     = ["Toshio Maki", "Alex Suraci"]
   s.license       = "Apache 2.0"
-  s.email       = ["vcap-dev@googlegroups.com"]
-  s.homepage    = "http://github.com/cloudfoundry/cfoundry"
+  s.email       = ["kirika.k2@gmail.com"]
+  s.homepage    = "http://github.com/kirikak2/cfoundry"
   s.summary     = %q{
     High-level library for working with the Cloud Foundry API.
+    This is fork from https://github.com/cloudfoundry-attic/cfoundry
   }
-
-  s.rubyforge_project = "cfoundry"
 
   s.files         = %w[LICENSE Rakefile] + Dir.glob("lib/**/*") + \
                       Dir.glob("vendor/errors/**/*")
