@@ -27,6 +27,8 @@ Gem::Specification.new do |s|
   s.add_dependency "rubyzip", "~> 0.9"
 
   # s.add_development_dependency "anchorman"
+  s.add_development_dependency "pry"
+  s.add_development_dependency "pry-stack_explorer"
   s.add_development_dependency "factory_girl"
   s.add_development_dependency "gem-release"
   s.add_development_dependency "json_pure", "~> 1.8"

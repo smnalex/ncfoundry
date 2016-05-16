@@ -1,5 +1,6 @@
 SPEC_ROOT = File.dirname(__FILE__).freeze
 
+require "pry"
 require "rspec"
 require "putsinator"
 require "cfoundry"

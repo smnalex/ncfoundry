@@ -1,7 +1,10 @@
-require "cfoundry/v2/model"
+require 'cfoundry/v2/model'
+require "cfoundry/v2/helper"
 
 module CFoundry::V2
   class Organization < Model
+    extend Helper
+
     attribute :name, :string
     attribute :billing_enabled, :boolean
     attribute :status, :string
@@ -12,6 +15,13 @@ module CFoundry::V2
     to_many   :managers, :as => :user
     to_many   :billing_managers, :as => :user
     to_many   :auditors, :as => :user
+
+    to_many_support   :spaces
+    to_many_support   :domains
+    to_many_support   :users
+    to_many_support   :managers
+    to_many_support   :billing_managers
+    to_many_support   :auditors
 
     to_one    :quota_definition
 
