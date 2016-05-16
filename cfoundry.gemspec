@@ -14,8 +14,7 @@ Gem::Specification.new do |s|
     This is fork from https://github.com/cloudfoundry-attic/cfoundry
   }
 
-  s.files         = %w[LICENSE Rakefile] + Dir.glob("lib/**/*") + \
-                      Dir.glob("vendor/errors/**/*")
+  s.files         = `git ls-files`.split($/) + Dir.glob("vendor/errors/**/*")
   s.test_files    = Dir.glob("spec/**/*")
   s.require_paths = %w[lib]
 
