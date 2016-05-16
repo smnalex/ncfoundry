@@ -1,4 +1,4 @@
 module CFoundry # :nodoc:
   # CFoundry library version number.
-  VERSION = "4.7.1".freeze
+  VERSION = File.read(File.join(File.dirname(__FILE__), '..', '..', 'VERSION')).freeze
 end
