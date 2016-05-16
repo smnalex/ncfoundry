@@ -5,7 +5,7 @@ require "cfoundry/version"
 Gem::Specification.new do |s|
   s.name        = "new_cfoundry"
   s.version     = CFoundry::VERSION.dup
-  s.authors     = ["Toshio Maki", "Alex Suraci"]
+  s.authors     = ["CI-Platform-Team", "Toshio Maki"]
   s.license       = "Apache 2.0"
   s.email       = ["kirika.k2@gmail.com"]
   s.homepage    = "http://github.com/kirikak2/cfoundry"
@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency "multipart-post", "~> 1.1"
   s.add_dependency "rubyzip", "~> 0.9"
 
-  # s.add_development_dependency "anchorman"
+  s.add_development_dependency 'bundler', '~> 1.9'
   s.add_development_dependency "pry"
   s.add_development_dependency "pry-stack_explorer"
   s.add_development_dependency "factory_girl"
@@ -37,4 +37,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "timecop", "~> 0.6.1"
   s.add_development_dependency "webmock", "~> 1.9"
   s.add_development_dependency "putsinator"
+  s.add_development_dependency "version"
 end
