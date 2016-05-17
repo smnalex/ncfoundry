@@ -4,7 +4,6 @@ module CFoundry::V2::Helper
 
     alias_method :"remove_#{singular}_without_support", :"remove_#{singular}"
     define_method(:"remove_#{singular}") do |x|
-      binding.pry
       result = self.__send__("remove_#{singular}_without_support", x)
       result.nil?
     end
