@@ -113,7 +113,7 @@ module CFoundry
 
     def scim
       auth_header = token && token.auth_header
-      scim = CF::UAA::Scim.new(uaa_url, auth_header, :symbolize_keys => true)
+      scim = CF::UAA::Scim.new(uaa_url, auth_header, :symbolize_keys => true, :http_proxy => @http_proxy, :https_proxy => @https_proxy)
       scim.logger.level = @trace ? Logger::Severity::TRACE : 1
       scim
     end

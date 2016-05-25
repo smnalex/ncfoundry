@@ -24,8 +24,8 @@ module CFoundry::V2
     # Create a new Client for interfacing with the given target.
     #
     # A token may also be provided to skip the login step.
-    def initialize(target, token = nil)
-      @base = Base.new(target, token)
+    def initialize(target, token = nil, options = {})
+      @base = Base.new(target, token, options)
     end
 
     def version
