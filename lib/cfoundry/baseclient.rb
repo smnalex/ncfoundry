@@ -12,6 +12,7 @@ module CFoundry
     extend Forwardable
 
     attr_reader :rest_client
+    attr_accessor :client_id, :client_secret
 
     def_delegators :rest_client, :target, :target=, :token,
       :trace, :backtrace, :backtrace=, :log, :log=,
@@ -21,6 +22,8 @@ module CFoundry
       @rest_client = CFoundry::RestClient.new(target, token)
       @rest_client.http_proxy = options[:http_proxy]
       @rest_client.https_proxy = options[:https_proxy]
+      self.client_id = options[:client_id]
+      self.client_secret = options[:client_secret]
       self.trace = false
       self.backtrace = false
       self.log = false
@@ -31,7 +34,10 @@ module CFoundry
         endpoint = info[:authorization_endpoint]
 
         if endpoint
-          uaa = CFoundry::UAAClient.new(endpoint, "cf", http_proxy: http_proxy, https_proxy: https_proxy)
+          uaa = CFoundry::UAAClient.new(endpoint,
+                                        client_id || "cf",
+                                        client_secret: client_secret,
+                                        http_proxy: http_proxy, https_proxy: https_proxy)
           uaa.trace = trace
           uaa.token = token
           uaa
