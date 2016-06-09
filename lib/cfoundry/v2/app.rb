@@ -75,7 +75,7 @@ module CFoundry::V2
       system_env = {}
 
       @client.base.env(@guid).each do |idx, info|
-        system_env = info if 'system_env_json'.eql?(idx.to_s)
+        system_env[idx.to_s] = info
       end
 
       system_env
