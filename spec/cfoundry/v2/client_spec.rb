@@ -40,7 +40,7 @@ module CFoundry
 
         context "when there is access_token_data" do
           let(:token_data) { {:user_id => "123", :email => "guy@example.com"} }
-          let(:auth_header) { Base64.encode64("{}#{MultiJson.encode(token_data)}") }
+          let(:auth_header) { JWT.encode(token_data, nil, false) }
           let(:token) do
             CFoundry::AuthToken.new("bearer #{auth_header}", "some-refresh-token")
           end

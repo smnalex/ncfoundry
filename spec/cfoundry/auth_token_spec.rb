@@ -3,7 +3,7 @@ require "spec_helper"
 
 describe CFoundry::AuthToken do
   describe ".from_uaa_token_info" do
-    let(:access_token) { Base64.encode64('{"algo": "h1234"}{"user_id": "a6", "email": "a@b.com"}random-bytes') }
+    let(:access_token) { JWT.encode({user_id: "a6", email: "a@b.com"}, nil, 'none') }
     let(:info_hash) do
       {
         :token_type => "bearer",
@@ -70,16 +70,15 @@ describe CFoundry::AuthToken do
         end
 
         describe '#token_data' do
-          subject { super().token_data }
-          it { should eq({}) }
+          it { subject.token_data.should eq({}) }
         end
       end
     end
   end
 
   describe ".from_hash(hash)" do
-    let(:token_data) { '{"baz":"buzz"}' }
-    let(:token) { Base64.encode64("{\"foo\":1}#{token_data}") }
+    let(:token_data) { {baz:"buzz"} }
+    let(:token) { JWT.encode(token_data, nil, 'none') }
 
     let(:hash) do
       {
@@ -113,8 +112,8 @@ describe CFoundry::AuthToken do
   end
 
   describe "#auth_header=" do
-    let(:access_token) { Base64.encode64('{"algo": "h1234"}{"user_id": "a6", "email": "a@b.com"}random-bytes') }
-    let(:other_access_token) { Base64.encode64('{"algo": "h1234"}{"user_id": "b6", "email": "a@b.com"}random-bytes') }
+    let(:access_token) { JWT.encode({ user_id: "a6", email: "a@b.com" }, nil, 'none') }
+    let(:other_access_token) { JWT.encode({ user_id: "b6", email: "a@b.com"}, nil, 'none') }
 
     subject { CFoundry::AuthToken.new("bearer #{access_token}") }
 
@@ -127,7 +126,7 @@ describe CFoundry::AuthToken do
   end
 
   describe "#expires_soon?" do
-    let(:access_token) { Base64.encode64(%Q|{"algo": "h1234"}{"exp":#{expiration.to_i}}random-bytes|) }
+    let(:access_token) { JWT.encode({ exp: expiration.to_i }, nil, 'none') }
 
     subject { CFoundry::AuthToken.new("bearer #{access_token}") }
 

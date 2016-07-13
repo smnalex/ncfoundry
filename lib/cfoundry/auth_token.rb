@@ -38,12 +38,11 @@ module CFoundry
       return @token_data if @token_data
       return {} unless @auth_header
 
-      json_hashes = Base64.decode64(@auth_header.split(" ", 2).last)
-      data_json = json_hashes.sub(JSON_HASH, "")[JSON_HASH]
+      data_json = @auth_header.split(" ", 2).last
       return {} unless data_json
 
-      @token_data = MultiJson.load data_json, :symbolize_keys => true
-    rescue MultiJson::DecodeError
+      @token_data = JWT.decode(data_json, nil, false)[0].symbolize_keys
+    rescue
       {}
     end
 
@@ -53,7 +52,7 @@ module CFoundry
     end
 
     def expiration
-      Time.at(token_data[:exp])
+      token_data[:exp].nil? ? Time.at(0) : Time.at(token_data[:exp])
     end
 
     def expires_soon?
