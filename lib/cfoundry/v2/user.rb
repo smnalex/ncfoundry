@@ -75,6 +75,10 @@ module CFoundry
         true
       end
 
+      def username
+        manifest.try(:[], :entity).try(:[], :username)
+      end
+
       private 
 
       def get_meta_from_uaa
