@@ -130,6 +130,153 @@ json
           expect(WebMock).to have_requested(:delete, "http://api.example.com/v2/spaces/#{space2.guid}/developers/#{user.guid}")
         end
       end
+
+      describe "#add_manager_by_username" do
+        let(:user) { build(:user) }
+        let(:organization) do
+          build(:organization, client: client, users: [],
+            managers: [], billing_managers: [], auditors: [])
+        end
+
+        let(:status) { 201 }
+
+        let(:add_manager_org_response) do
+          <<-json
+{
+  "metadata": {
+    "guid": "8d2238e2-2fb3-4ede-b188-1fd3a533c4b4",
+    "url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4",
+    "created_at": "2015-11-30T23:38:59Z",
+    "updated_at": null
+  },
+  "entity": {
+    "name": "name-2523",
+    "billing_enabled": false,
+    "quota_definition_guid": "0e36ae22-a752-4e37-9dbf-0bac5c1b93c1",
+    "status": "active",
+    "quota_definition_url": "/v2/quota_definitions/0e36ae22-a752-4e37-9dbf-0bac5c1b93c1",
+    "spaces_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/spaces",
+    "domains_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/domains",
+    "private_domains_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/private_domains",
+    "users_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/users",
+    "managers_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/managers",
+    "billing_managers_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/billing_managers",
+    "auditors_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/auditors",
+    "app_events_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/app_events",
+    "space_quota_definitions_url": "/v2/organizations/8d2238e2-2fb3-4ede-b188-1fd3a533c4b4/space_quota_definitions"
+  }
+}
+json
+        end
+
+        before do
+          allow(user).to receive(:username).and_return("user_1")
+          stub_request(:put, "http://api.example.com/v2/organizations/#{organization.guid}/managers").to_return(status: status, body: add_manager_org_response)
+        end
+
+        it "adds the given user to OrgManager in the org" do
+          organization.add_manager_by_username("user_1")
+          expect(WebMock).to have_requested(:put, "http://api.example.com/v2/organizations/#{organization.guid}/managers")
+        end
+      end
+
+      describe "#add_billing_manager_by_username" do
+        let(:user) { build(:user) }
+        let(:organization) do
+          build(:organization, client: client, users: [],
+            managers: [], billing_managers: [], auditors: [])
+        end
+
+        let(:status) { 201 }
+
+        let(:add_billing_manager_org_response) do
+          <<-json
+{
+  "metadata": {
+    "guid": "c8d4f13c-8880-4859-8e03-fc690efd8f48",
+    "url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48",
+    "created_at": "2015-11-30T23:38:58Z",
+    "updated_at": null
+  },
+  "entity": {
+    "name": "name-2470",
+    "billing_enabled": false,
+    "quota_definition_guid": "4ad7378e-e90a-4714-b906-a451dd0d5507",
+    "status": "active",
+    "quota_definition_url": "/v2/quota_definitions/4ad7378e-e90a-4714-b906-a451dd0d5507",
+    "spaces_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/spaces",
+    "domains_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/domains",
+    "private_domains_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/private_domains",
+    "users_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/users",
+    "managers_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/managers",
+    "billing_managers_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/billing_managers",
+    "auditors_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/auditors",
+    "app_events_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/app_events",
+    "space_quota_definitions_url": "/v2/organizations/c8d4f13c-8880-4859-8e03-fc690efd8f48/space_quota_definitions"
+  }
+}
+json
+        end
+
+        before do
+          allow(user).to receive(:username).and_return("user_1")
+          stub_request(:put, "http://api.example.com/v2/organizations/#{organization.guid}/billing_managers").to_return(status: status, body: add_billing_manager_org_response)
+        end
+
+        it "adds the given user to OrgBillingMnager in the org" do
+          organization.add_billing_manager_by_username("user_1")
+          expect(WebMock).to have_requested(:put, "http://api.example.com/v2/organizations/#{organization.guid}/billing_managers")
+        end
+      end
+
+      describe "#add_auditor_by_username" do
+        let(:user) { build(:user) }
+        let(:organization) do
+          build(:organization, client: client, users: [],
+            managers: [], billing_managers: [], auditors: [])
+        end
+
+        let(:status) { 201 }
+
+        let(:add_auditor_org_response) do
+          <<-json
+{
+  "metadata": {
+    "guid": "50dfb04d-cd49-477d-a54c-32e00e180022",
+    "url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022",
+    "created_at": "2015-11-30T23:38:58Z",
+    "updated_at": null
+  },
+  "entity": {
+    "name": "name-2476",
+    "billing_enabled": false,
+    "quota_definition_guid": "8de0754e-bb1e-4739-be6e-91104bbab281",
+    "status": "active",
+    "quota_definition_url": "/v2/quota_definitions/8de0754e-bb1e-4739-be6e-91104bbab281",
+    "spaces_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/spaces",
+    "domains_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/domains",
+    "private_domains_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/private_domains",
+    "users_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/users",
+    "managers_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/managers",
+    "billing_managers_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/billing_managers",
+    "auditors_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/auditors",
+    "app_events_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/app_events",
+    "space_quota_definitions_url": "/v2/organizations/50dfb04d-cd49-477d-a54c-32e00e180022/space_quota_definitions"
+  }
+}
+json
+        end
+
+        before do
+          allow(user).to receive(:username).and_return("user_1")
+          stub_request(:put, "http://api.example.com/v2/organizations/#{organization.guid}/auditors").to_return(status: status, body: add_auditor_org_response)
+        end
+
+        it "adds the given user to OrgAuditor in the org" do
+          organization.add_auditor_by_username("user_1")
+          expect(WebMock).to have_requested(:put, "http://api.example.com/v2/organizations/#{organization.guid}/auditors")
+        end
+      end
     end
   end
 end

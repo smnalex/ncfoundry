@@ -74,6 +74,13 @@ module CFoundry::V2::ModelMagic
       end
 
       #
+      # def add_MODEL_by_username
+      #
+      define_method(:"add_#{singular}_by_username") do |username|
+        @client.base.put("v2", plural_object_name, @guid, plural, :accept => :json, :content => :json, :payload => {:username => username.to_s})
+      end
+
+      #
       # def create_MODEL
       #
       define_method("create_#{singular}") do |*args|
