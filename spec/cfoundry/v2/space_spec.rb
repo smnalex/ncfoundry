@@ -145,6 +145,16 @@ json
           expect(WebMock).to have_requested(:put, "http://api.example.com/v2/spaces/#{space.guid}/developers")
         end
       end
+
+      describe "#list_routes_for_space" do
+        let(:domain) { build(:domain, :name => "my-domain") }
+        let(:route) { build(:route, :domain => domain) }
+
+        it "returns the domain that the user has specified" do
+          allow(space).to receive(:routes).and_return([route])
+          expect(space.routes[0].domain.name).to eq("my-domain")
+        end
+      end
     end
   end
 end
