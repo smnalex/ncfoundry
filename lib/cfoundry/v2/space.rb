@@ -14,6 +14,7 @@ module CFoundry::V2
     to_many   :domains
     to_many   :service_instances
     to_many   :services
+    to_many   :routes
 
     to_many_support   :developers
     to_many_support   :managers
