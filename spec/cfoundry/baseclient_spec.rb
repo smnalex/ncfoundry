@@ -238,12 +238,14 @@ describe CFoundry::BaseClient do
 
     it "sets proxy options if available" do
       stub_request(:get, "https://example.com/something")
-      subject.https_proxy = "user:password@https-proxy.example.com:1234"
+      original_proxy_env = ENV["https_proxy"]
+      ENV["https_proxy"] = "http://user:password@https-proxy.example.com:1234"
       allow(Net::HTTP).to receive(:start).and_call_original
 
       subject.stream_url("https://example.com/something")
 
       expect(Net::HTTP).to have_received(:start).with(anything, anything, 'https-proxy.example.com', 1234, 'user', 'password', anything)
+      ENV["https_proxy"] = original_proxy_env
     end
 
     it "raises NotFound if response is 404" do

@@ -295,6 +295,15 @@ describe CFoundry::RestClient do
       subject { CFoundry::RestClient::HTTPFactory.create(URI.parse(target_uri), proxy_options) }
 
       context "when no proxy URI is set" do
+        before do
+          @original_no_proxy_env = ENV["NO_PROXY"]
+          ENV["NO_PROXY"] = "example.com"
+        end
+
+        after do
+          ENV["NO_PROXY"] = @original_no_proxy_env
+        end
+
         it "should return an instance of the plain Net:HTTP class" do
           expect(subject).to be_instance_of(Net::HTTP)
           expect(subject.use_ssl?).to be_false
@@ -303,6 +312,15 @@ describe CFoundry::RestClient do
       end
 
       context "when the target is an https URI" do
+        before do
+          @original_no_proxy_env = ENV["NO_PROXY"]
+          ENV["NO_PROXY"] = "example.com"
+        end
+
+        after do
+          ENV["NO_PROXY"] = @original_no_proxy_env
+        end
+
         let(:target_uri) { "https://example.com" }
         it "should return an instance of the plain Net:HTTP class with use_ssl" do
           expect(subject).to be_instance_of(Net::HTTP)
