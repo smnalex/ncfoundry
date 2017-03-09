@@ -3,14 +3,12 @@ require "uaa"
 
 module CFoundry
   class UAAClient
-    attr_accessor :target, :client_id, :client_secret, :token, :trace, :http_proxy, :https_proxy
+    attr_accessor :target, :client_id, :client_secret, :token, :trace
 
     def initialize(target, client_id = "cf", options = {})
       @target = target
       @client_id = client_id
       @client_secret = options[:client_secret]
-      @http_proxy = options[:http_proxy]
-      @https_proxy = options[:https_proxy]
       @uaa_info_client = uaa_info_client_for(target)
     end
 
@@ -95,26 +93,18 @@ module CFoundry
     private
 
     def uaa_info_client_for(url)
-      CF::UAA::Info.new(url,
-                        :symbolize_keys => true,
-                        :http_proxy => http_proxy,
-                        :https_proxy => https_proxy
-      )
+      CF::UAA::Info.new(url, :symbolize_keys => true)
     end
 
     def token_issuer
-      @token_issuer ||= CF::UAA::TokenIssuer.new(target, client_id, client_secret,
-        :symbolize_keys => true,
-        :http_proxy => @http_proxy,
-        :https_proxy => @https_proxy
-      )
+      @token_issuer ||= CF::UAA::TokenIssuer.new(target, client_id, client_secret, :symbolize_keys => true)
       @token_issuer.logger.level = @trace ? Logger::Severity::TRACE : 1
       @token_issuer
     end
 
     def scim
       auth_header = token && token.auth_header
-      scim = CF::UAA::Scim.new(uaa_url, auth_header, :symbolize_keys => true, :http_proxy => @http_proxy, :https_proxy => @https_proxy)
+      scim = CF::UAA::Scim.new(uaa_url, auth_header, :symbolize_keys => true)
       scim.logger.level = @trace ? Logger::Severity::TRACE : 1
       scim
     end

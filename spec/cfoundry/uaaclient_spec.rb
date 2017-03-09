@@ -25,17 +25,6 @@ EOF
     end
   end
 
-  describe '#initialize' do
-    it "passes proxy info to the UAA info client" do
-      allow(CF::UAA::Info).to receive(:new)
-      CFoundry::UAAClient.new(target, 'cf', http_proxy: 'http-proxy.example.com', https_proxy: 'https-proxy.example.com')
-      expect(CF::UAA::Info).to have_received(:new).with(anything, hash_including(
-          http_proxy: 'http-proxy.example.com',
-          https_proxy: 'https-proxy.example.com'
-      ))
-    end
-  end
-
   describe '#prompts' do
     subject { uaa.prompts }
 
@@ -382,14 +371,11 @@ EOF
 
     it "passes proxy info to the token issuer" do
       allow(CF::UAA::TokenIssuer).to receive(:new).and_call_original
-      uaa.http_proxy = 'http-proxy.example.com'
-      uaa.https_proxy = 'https-proxy.example.com'
 
       uaa.send(:token_issuer)
 
       expect(CF::UAA::TokenIssuer).to have_received(:new).with(anything, anything, anything, hash_including(
-          http_proxy: 'http-proxy.example.com',
-          https_proxy: 'https-proxy.example.com'
+        symbolize_keys: true
       ))
     end
   end

@@ -18,8 +18,8 @@ module CFoundry::V2
     # [Space] Currently targeted space.
     attr_accessor :current_space
 
-    def_delegators :@base, :target, :target=, :token, :token=, :http_proxy, :http_proxy=,
-      :https_proxy, :https_proxy=, :trace, :trace=, :log, :log=, :info
+    def_delegators :@base, :target, :target=, :token, :token=,
+      :trace, :trace=, :log, :log=, :info
 
     # Create a new Client for interfacing with the given target.
     #

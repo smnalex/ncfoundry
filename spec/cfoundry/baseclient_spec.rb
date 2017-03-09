@@ -135,22 +135,6 @@ describe CFoundry::BaseClient do
             expect(subject.uaa.target).to eq "foo"
           end
         end
-
-        context "when proxy is set" do
-          before do
-            subject.http_proxy = 'http-proxy.example.com'
-            subject.https_proxy = 'https-proxy.example.com'
-          end
-
-          it "passes the proxy to the uaa client" do
-            allow(CFoundry::UAAClient).to receive(:new).and_call_original
-            subject.uaa
-            expect(CFoundry::UAAClient).to have_received(:new).with(anything, anything, hash_including(
-                http_proxy: 'http-proxy.example.com',
-                https_proxy: 'https-proxy.example.com'
-            ))
-          end
-        end
       end
 
       describe "#token=" do
