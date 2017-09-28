@@ -25,13 +25,18 @@ module CFoundry
 
       describe "create" do
         it "uses #create!" do
-          expect(model).to receive(:create!)
+          expect(model).to receive(:create!).with({})
           model.create
+        end
+
+        it "passes options along to create!" do
+          expect(model).to receive(:create!).with(:accepts_incomplete => true)
+          model.create(:accepts_incomplete => true)
         end
 
         context "without errors" do
           it "returns true" do
-            expect(model).to receive(:create!)
+            expect(model).to receive(:create!).with({})
             expect(model.create).to eq(true)
           end
         end
@@ -78,13 +83,29 @@ module CFoundry
           model.foo = "bar"
         end
 
-        it "posts to the model's create url with appropriate arguments" do
-          expect(client.base).to receive(:post).with("v2", :odd_endpoint,
-            :content => :json,
-            :accept => :json,
-            :payload => {:foo => "bar"}
-          ) { {:metadata => {}} }
-          model.create!
+        context "without options" do
+          it "posts to the model's create url with appropriate arguments and empty params hash" do
+            expect(client.base).to receive(:post).with("v2", :odd_endpoint,
+              :content => :json,
+              :accept => :json,
+              :payload => {:foo => "bar"},
+              :params => {}
+            ) { {:metadata => {}} }
+            model.create!
+          end
+        end
+
+        context "with options" do
+          it "sends create with appropriate arguments and options" do
+            options = {:excellent => "billandted"}
+            expect(client.base).to receive(:post).with("v2", :odd_endpoint,
+              :content => :json,
+              :accept => :json,
+              :payload => {:foo => "bar"},
+              :params => options
+            ) { {:metadata => {}} }
+            model.create!(options)
+          end
         end
 
         it "clears diff" do
@@ -133,14 +154,31 @@ module CFoundry
           }
         end
 
-        it "updates using the client with the v2 api, its plural model name, object guid, and diff object" do
-          model.foo = "bar"
-          expect(client.base).to receive(:put).with("v2", :test_models, guid,
-            :content => :json,
-            :accept => :json,
-            :payload => {:foo => "bar"}
-          )
-          model.update!
+        context "without options" do
+          it "updates using the client with the v2 api, its plural model name, object guid, diff object, and empty params hash" do
+            model.foo = "bar"
+            expect(client.base).to receive(:put).with("v2", :test_models, guid,
+              :content => :json,
+              :accept => :json,
+              :payload => {:foo => "bar"},
+              :params => {}
+            )
+            model.update!
+          end
+        end
+
+        context "with options" do
+          it "sends update with the object guid, diff object and options" do
+            model.foo = "bar"
+            options = {:excellent => "billandted"}
+            expect(client.base).to receive(:put).with("v2", :test_models, guid,
+              :content => :json,
+              :accept => :json,
+              :payload => {:foo => "bar"},
+              :params => options
+            )
+            model.update!(options)
+          end
         end
 
         it "updates the updated_at timestamp" do
