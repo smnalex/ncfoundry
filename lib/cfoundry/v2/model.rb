@@ -76,8 +76,8 @@ module CFoundry::V2
       @changes = {}
     end
 
-    def create
-      create!
+    def create(options = {})
+      create!(options)
       true
     rescue CFoundry::APIError => e
       if e.instance_of? CFoundry::APIError
@@ -94,7 +94,7 @@ module CFoundry::V2
 
     # this does a bit of extra processing to allow for
     # `delete!' followed by `create!'
-    def create!
+    def create!(options = {})
       payload = {}
 
       @manifest ||= {}
@@ -123,7 +123,8 @@ module CFoundry::V2
       @manifest = @client.base.post("v2", create_endpoint_name,
         :content => :json,
         :accept => :json,
-        :payload => payload
+        :payload => payload,
+        :params => options
       )
 
       @guid = @manifest[:metadata][:guid]
@@ -137,11 +138,12 @@ module CFoundry::V2
       plural_object_name
     end
 
-    def update!
+    def update!(options ={})
       @manifest = @client.base.put("v2", plural_object_name, guid,
         :content => :json,
         :accept => :json,
-        :payload => @diff
+        :payload => @diff,
+        :params => options
       )
 
       @diff.clear
