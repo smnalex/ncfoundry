@@ -42,11 +42,11 @@ EOF
       end
 
       it "has free/paid indicator attribute" do
-        expect(subject.free).to be_true
+        expect(subject.free).to be_truthy
       end
 
       it "has a boolean 'public' attribute" do
-        expect(subject.public).to be_true
+        expect(subject.public).to be_truthy
       end
     end
   end

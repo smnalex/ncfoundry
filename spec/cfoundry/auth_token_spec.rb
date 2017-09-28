@@ -135,7 +135,7 @@ describe CFoundry::AuthToken do
 
       it "returns true" do
         Timecop.freeze do
-          expect(subject.expires_soon?).to be_true
+          expect(subject.expires_soon?).to be_truthy
         end
       end
     end
@@ -145,7 +145,7 @@ describe CFoundry::AuthToken do
 
       it "returns false" do
         Timecop.freeze do
-          expect(subject.expires_soon?).to be_false
+          expect(subject.expires_soon?).to be_falsey
         end
       end
     end

@@ -306,8 +306,8 @@ describe CFoundry::RestClient do
 
         it "should return an instance of the plain Net:HTTP class" do
           expect(subject).to be_instance_of(Net::HTTP)
-          expect(subject.use_ssl?).to be_false
-          expect(subject.proxy?).to_not be_true
+          expect(subject.use_ssl?).to be_falsey
+          expect(subject.proxy?).to_not be_truthy
         end
       end
 
@@ -324,8 +324,8 @@ describe CFoundry::RestClient do
         let(:target_uri) { "https://example.com" }
         it "should return an instance of the plain Net:HTTP class with use_ssl" do
           expect(subject).to be_instance_of(Net::HTTP)
-          expect(subject.use_ssl?).to be_true
-          expect(subject.proxy?).to_not be_true
+          expect(subject.use_ssl?).to be_truthy
+          expect(subject.proxy?).to_not be_truthy
         end
       end
 
@@ -333,7 +333,7 @@ describe CFoundry::RestClient do
         let(:proxy_options) { ["exapmle.com", 8080, nil, nil] }
 
         it "should return an instance of the proxy class" do
-          expect(subject.proxy?).to be_true
+          expect(subject.proxy?).to be_truthy
           expect(subject.proxy_address).to eql("exapmle.com")
           expect(subject.proxy_port).to eql(8080)
         end
@@ -343,7 +343,7 @@ describe CFoundry::RestClient do
         let(:proxy_options) { ["exapmle.com", "8080", "user", "pass"] }
 
         it "should return an instance of the proxy class" do
-          expect(subject.proxy?).to be_true
+          expect(subject.proxy?).to be_truthy
           expect(subject.proxy_user).to eql("user")
           expect(subject.proxy_pass).to eql("pass")
         end

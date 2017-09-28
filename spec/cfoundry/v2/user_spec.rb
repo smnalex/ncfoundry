@@ -16,7 +16,7 @@ module CFoundry
           it "also removes the user from uaa" do
             expect_any_instance_of(CFoundry::UAAClient).to receive(:delete_user)
 
-            expect(subject.delete!).to be_true
+            expect(subject.delete!).to be_truthy
           end
         end
 

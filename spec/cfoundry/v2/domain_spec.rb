@@ -37,7 +37,7 @@ module CFoundry
 
         context "when the domain is persisted and has no owning organization" do
           it "returns true" do
-            expect(domain.system?).to be_true
+            expect(domain.system?).to be_truthy
           end
         end
 
@@ -45,7 +45,7 @@ module CFoundry
           let(:params) { {:guid => nil} }
 
           it "returns false" do
-            expect(domain.system?).to be_false
+            expect(domain.system?).to be_falsey
           end
         end
 
@@ -54,7 +54,7 @@ module CFoundry
           let(:org) { build(:organization) }
 
           it "returns false" do
-            expect(domain.system?).to be_false
+            expect(domain.system?).to be_falsey
           end
         end
       end

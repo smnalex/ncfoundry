@@ -379,7 +379,7 @@ module CFoundry
 
           it "has next_page set to true" do
             results = client.test_models_first_page
-            expect(results[:next_page]).to be_true
+            expect(results[:next_page]).to be_truthy
             expect(results[:results].length).to eq(1)
             expect(results[:results].first).to be_a TestModel
           end
@@ -390,7 +390,7 @@ module CFoundry
 
           it "has next_page set to false" do
             results = client.test_models_first_page
-            expect(results[:next_page]).to be_false
+            expect(results[:next_page]).to be_falsey
           end
         end
       end
