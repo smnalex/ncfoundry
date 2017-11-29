@@ -1,4 +1,4 @@
-require "zip/zipfilesystem"
+require "zip"
 
 module CFoundry
   # Generic Zpi API. Uses rubyzip underneath, but may be changed in the future
@@ -13,7 +13,7 @@ module CFoundry
     # contents, recursively (not just top-level).
     def entry_lines(file)
       entries = []
-      ::Zip::ZipFile.foreach(file) do |zentry|
+      ::Zip::File.foreach(file) do |zentry|
         entries << zentry
       end
       entries
@@ -21,7 +21,7 @@ module CFoundry
 
     # Unpack a zip +file+ to directory +dest+.
     def unpack(file, dest)
-      ::Zip::ZipFile.foreach(file) do |zentry|
+      ::Zip::File.foreach(file) do |zentry|
         epath = "#{dest}/#{zentry}"
         dirname = File.dirname(epath)
         FileUtils.mkdir_p(dirname) unless File.exists?(dirname)
@@ -44,7 +44,7 @@ module CFoundry
       files = files_to_pack(dir)
       return false if files.empty?
 
-      ::Zip::ZipFile.open(zipfile, true) do |zf|
+      ::Zip::File.open(zipfile, true) do |zf|
         files.each do |f|
           zf.add(f.sub("#{dir}/",''), f)
         end
